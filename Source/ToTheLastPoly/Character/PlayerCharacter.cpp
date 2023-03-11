@@ -13,6 +13,7 @@
 #include "ToTheLastPoly/Weapon/Weapon.h"
 #include "ToTheLastPoly/Components/CombatComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -64,11 +65,16 @@ void APlayerCharacter::BeginPlay()
 			Subsystem->AddMappingContext(PlayerCharacterMappingContext, 0);
 		}
 	}
+
+	StartingAimRotation = FRotator(0.0f, GetBaseAimRotation().Yaw, 0.0f);
+	AO_Yaw = 0.0f;
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	AimOffset(DeltaTime);
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -192,6 +198,32 @@ void APlayerCharacter::AimReleased()
 		Combat->SetAiming(false);
 	}
 }
+
+void APlayerCharacter::AimOffset(float DeltaTime)
+{
+	if (Combat && Combat->EquippedWeapon == nullptr) return;
+
+	FVector Velocity = GetVelocity();
+    Velocity.Z = 0.0f;
+    float Speed = Velocity.Size();
+	bool bIsInAir = GetCharacterMovement()->IsFalling();
+
+	if (Speed == 0.0f && !bIsInAir) // standing still, not jumping
+	{
+		FRotator CurrentAimRotation =  FRotator(0.0f, GetBaseAimRotation().Yaw, 0.0f);
+		FRotator DeltaAimRotatin = UKismetMathLibrary::NormalizedDeltaRotator(CurrentAimRotation, StartingAimRotation);
+		AO_Yaw = DeltaAimRotatin.Yaw;
+		bUseControllerRotationYaw = false;
+	}
+	if (Speed > 0.0f || bIsInAir) // running or jumping
+	{
+		StartingAimRotation = FRotator(0.0f, GetBaseAimRotation().Yaw, 0.0f);
+		AO_Yaw = 0.0f;
+		bUseControllerRotationYaw = true;
+	}
+
+	AO_Pitch = GetBaseAimRotation().Pitch;
+} 
 
 void APlayerCharacter::SetOverlappingWeapon(AWeapon * Weapon)
 {

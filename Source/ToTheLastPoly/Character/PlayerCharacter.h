@@ -58,6 +58,7 @@ class TOTHELASTPOLY_API APlayerCharacter : public ACharacter
 		void ToggleCrouch();
 		void AimPressed();
 		void AimReleased();
+		void AimOffset(float DeltaTime);
 
 	private:
 		// Mesh
@@ -88,6 +89,10 @@ class TOTHELASTPOLY_API APlayerCharacter : public ACharacter
 
 		UFUNCTION()
 		void OnRep_OverlappingWeapon(AWeapon* LastWeapon);
+
+		float AO_Yaw;
+		float AO_Pitch;
+		FRotator StartingAimRotation;
 		
 	public:	
 		void SetOverlappingWeapon(AWeapon* Weapon);
@@ -97,4 +102,6 @@ class TOTHELASTPOLY_API APlayerCharacter : public ACharacter
 		bool IsAiming();
 
 		FORCEINLINE USkeletalMeshComponent* GetCharacterMesh() { return CharacterMesh; }
+		FORCEINLINE float GetAOYaw() const { return AO_Yaw; }
+		FORCEINLINE float GetAOPitch() const { return AO_Pitch; }
 };
