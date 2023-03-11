@@ -223,6 +223,14 @@ void APlayerCharacter::AimOffset(float DeltaTime)
 	}
 
 	AO_Pitch = GetBaseAimRotation().Pitch;
+	if (AO_Pitch > 90.0f && !IsLocallyControlled())
+	{
+		// map pitch from [270 - 360] to [-90, 0]
+		FVector2D InRange(270.0f, 360.0f);
+		FVector2D OutRange(-90.0f, 0.0f);
+
+		AO_Pitch = FMath::GetMappedRangeValueClamped(InRange, OutRange, AO_Pitch);
+	}
 } 
 
 void APlayerCharacter::SetOverlappingWeapon(AWeapon * Weapon)
@@ -264,5 +272,11 @@ void APlayerCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
 	{
 		LastWeapon->ShowPickupWidget(false);
 	}
+}
+
+AWeapon *APlayerCharacter::GetEquippedWeapon()
+{
+    if (Combat == nullptr) return nullptr;
+	return Combat->EquippedWeapon;
 }
 

@@ -96,10 +96,9 @@ class TOTHELASTPOLY_API APlayerCharacter : public ACharacter
 		
 	public:	
 		void SetOverlappingWeapon(AWeapon* Weapon);
-
 		bool IsWeaponEquipped();
-
 		bool IsAiming();
+		AWeapon* GetEquippedWeapon();
 
 		FORCEINLINE USkeletalMeshComponent* GetCharacterMesh() { return CharacterMesh; }
 		FORCEINLINE float GetAOYaw() const { return AO_Yaw; }
