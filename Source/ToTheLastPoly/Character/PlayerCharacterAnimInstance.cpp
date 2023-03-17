@@ -52,9 +52,6 @@ void UPlayerCharacterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 
     AO_Yaw = PlayerCharacter->GetAOYaw();
 
-    UE_LOG(LogTemp, Warning, TEXT("%f"), AO_Yaw);
-
-
     AO_Pitch = PlayerCharacter->GetAOPitch();
 
     if (bWeaponEquipped && EquippedWeapon && EquippedWeapon->GetWeaponMesh() && PlayerCharacter->GetMesh())
@@ -62,7 +59,7 @@ void UPlayerCharacterAnimInstance::NativeUpdateAnimation(float DeltaTime)
         LeftHandTransform = EquippedWeapon->GetWeaponMesh()->GetSocketTransform(FName("LeftHandSocket"), ERelativeTransformSpace::RTS_World);
         FVector OutPosition;
         FRotator OutRotation;
-        PlayerCharacter->GetMesh()->TransformToBoneSpace(FName("hand_r"), LeftHandTransform.GetLocation(), FRotator::ZeroRotator, OutPosition, OutRotation);
+        PlayerCharacter->GetMesh()->TransformToBoneSpace(FName("Hand_R"), LeftHandTransform.GetLocation(), FRotator::ZeroRotator, OutPosition, OutRotation);
 
         LeftHandTransform.SetLocation(OutPosition);
         LeftHandTransform.SetRotation(FQuat(OutRotation));

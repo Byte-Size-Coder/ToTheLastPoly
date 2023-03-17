@@ -88,6 +88,8 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 
 		//Mov
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &APlayerCharacter::SprintPressed);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &APlayerCharacter::SprintReleased);
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &APlayerCharacter::ToggleCrouch);
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
@@ -196,6 +198,22 @@ void APlayerCharacter::AimReleased()
 	if (Combat)
 	{
 		Combat->SetAiming(false);
+	}
+}
+
+void APlayerCharacter::SprintPressed()
+{
+	if (Combat && !Combat->bAiming)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+	}
+}
+
+void APlayerCharacter::SprintReleased()
+{
+	if (Combat && !Combat->bAiming)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = BaseSpeed;
 	}
 }
 

@@ -42,6 +42,9 @@ class TOTHELASTPOLY_API APlayerCharacter : public ACharacter
 
 		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 		UInputAction* JumpAction;
+
+		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+		UInputAction* SprintAction;
 		
 		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 		UInputAction* CrouchAction;
@@ -58,6 +61,8 @@ class TOTHELASTPOLY_API APlayerCharacter : public ACharacter
 		void ToggleCrouch();
 		void AimPressed();
 		void AimReleased();
+		void SprintPressed();
+		void SprintReleased();
 		void AimOffset(float DeltaTime);
 
 	private:
@@ -74,6 +79,12 @@ class TOTHELASTPOLY_API APlayerCharacter : public ACharacter
 
 		UPROPERTY(VisibleAnywhere, Category = Camera)
 		float CameraBoomLength = 600.0f;
+
+		UPROPERTY(EditAnywhere, Category = Movement)
+		float BaseSpeed = 600.0f;
+
+		UPROPERTY(EditAnywhere, Category = Movement)
+		float SprintSpeed = 900.0f;
 
 		UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class UWidgetComponent* OverheadWidget;
