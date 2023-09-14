@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "ToTheLastPoly/GameTypes/TurningInPlace.h"
 #include "PlayerCharacter.generated.h"
 
 class USkeletalMeshComponet;
@@ -25,6 +26,8 @@ class TOTHELASTPOLY_API APlayerCharacter : public ACharacter
 
 		virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 		virtual void PostInitializeComponents() override;
+
+		void PlayFireMontage();
 
 	protected:
 		// Called when the game starts or when spawned
@@ -54,6 +57,9 @@ class TOTHELASTPOLY_API APlayerCharacter : public ACharacter
 
 		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 		UInputAction* AimAction;
+		
+		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+		UInputAction* FireAction;
 
 		void Move(const FInputActionValue& Value);
 		void Look(const FInputActionValue& Value);
@@ -61,6 +67,8 @@ class TOTHELASTPOLY_API APlayerCharacter : public ACharacter
 		void ToggleCrouch();
 		void AimPressed();
 		void AimReleased();
+		void FirePressed();
+		void FireReleased();
 		void SprintPressed();
 		void SprintReleased();
 		void AimOffset(float DeltaTime);
@@ -86,6 +94,9 @@ class TOTHELASTPOLY_API APlayerCharacter : public ACharacter
 		UPROPERTY(EditAnywhere, Category = Movement)
 		float SprintSpeed = 900.0f;
 
+		UPROPERTY(EditAnywhere, Category = Movement)
+		float TurnSpeed = 10.0f;
+
 		UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class UWidgetComponent* OverheadWidget;
 
@@ -102,8 +113,16 @@ class TOTHELASTPOLY_API APlayerCharacter : public ACharacter
 		void OnRep_OverlappingWeapon(AWeapon* LastWeapon);
 
 		float AO_Yaw;
+		float InterpAO_Yaw;
 		float AO_Pitch;
+		
 		FRotator StartingAimRotation;
+
+		ETurningInPlace TurningInPlace;
+		void TurnInPlace(float DeltaTime);
+
+		UPROPERTY(EditAnywhere, Category = Combat)
+		class UAnimMontage* FireWeaponMontage;
 		
 	public:	
 		void SetOverlappingWeapon(AWeapon* Weapon);
@@ -114,4 +133,8 @@ class TOTHELASTPOLY_API APlayerCharacter : public ACharacter
 		FORCEINLINE USkeletalMeshComponent* GetCharacterMesh() { return CharacterMesh; }
 		FORCEINLINE float GetAOYaw() const { return AO_Yaw; }
 		FORCEINLINE float GetAOPitch() const { return AO_Pitch; }
+		FORCEINLINE ETurningInPlace GetTurningInPlace() const { return TurningInPlace; }
+		FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+		FVector GetHitTarget() const;
 };

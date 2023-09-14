@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "ToTheLastPoly/GameTypes/TurningInPlace.h"
 #include "PlayerCharacterAnimInstance.generated.h"
 
 /**
@@ -56,6 +57,12 @@ class TOTHELASTPOLY_API UPlayerCharacterAnimInstance : public UAnimInstance
 
 		UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 		FTransform LeftHandTransform;
+
+		UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+		ETurningInPlace TurningInPlace;
+
+		UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+		FRotator RightHandRotation;
 
 		FRotator CharacterRotationLastFrame;
 		FRotator CharacterRotation;

@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "CombatComponent.generated.h"
 
+#define TRACE_LENGTH 80000.0f
+
 class AWeapon;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -30,8 +32,22 @@ class TOTHELASTPOLY_API UCombatComponent : public UActorComponent
 
 		UFUNCTION()
 		void OnRep_EquippedWeapon();
+
+		void FirePressed(bool bPressed);
+
+		UFUNCTION(Server, Reliable)
+		void ServerFire(const FVector_NetQuantize& TraceHitTarget);
+
+		UFUNCTION(NetMulticast, Reliable)
+		void MulticastFire(const FVector_NetQuantize& TraceHitTarget);
+
+		void TraceUnderCrosshairs(FHitResult& TraceHitResult);
+
+		void SetHUDCrosshairs(float DeltaTime);
 	private:
 		class APlayerCharacter* PlayerCharacter;
+		class APolyPlayerController* PlayerController;
+		class APlayerHUD* HUD;
 
 		UPROPERTY(ReplicatedUsing = OnRep_EquippedWeapon)
 		AWeapon* EquippedWeapon;
@@ -44,4 +60,24 @@ class TOTHELASTPOLY_API UCombatComponent : public UActorComponent
 
 		UPROPERTY(EditAnywhere)
 		float AimWalkSpeed;
+
+		bool bFirePressed;
+
+		float CrosshairVelocityFactor;
+
+		float CrosshairInAirFactor;
+
+		FVector HitTarget;
+
+		float DefaultFOV;
+
+		UPROPERTY(EditAnywhere, Category = Combat)
+		float ZoomedFOV = 30.f;
+
+		float CurrentFOV;
+
+		UPROPERTY(EditAnywhere, Category = Combat)
+		float ZoomInterpSpeed = 20.f;
+
+		void InterpFOV(float DeltaTime);
 };
